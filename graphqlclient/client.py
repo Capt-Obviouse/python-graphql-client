@@ -1,4 +1,4 @@
-from six.moves import urllib
+import requests
 import json
 
 class GraphQLClient:
@@ -23,12 +23,11 @@ class GraphQLClient:
         if self.token is not None:
             headers[self.headername] = '{}'.format(self.token)
 
-        req = urllib.request.Request(self.endpoint, json.dumps(data).encode('utf-8'), headers)
+        req = requests.post(self.endpoint, data=json.dumps(data), headers=headers)
 
         try:
-            response = urllib.request.urlopen(req)
-            return response.read().decode('utf-8')
-        except urllib.error.HTTPError as e:
-            print((e.read()))
-            print('')
+            response = req.json()
+            return json.dumps(response)
+        except requests.exceptions.HTTPError as e:
+            print(e)
             raise e
